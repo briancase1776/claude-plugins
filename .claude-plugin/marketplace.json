@@ -1,34 +1,50 @@
 {
   "name": "briancase1776",
   "description": "Moot and ICC skills, installed straight from their GitHub repos",
-  "owner": { "name": "briancase1776" },
+  "owner": {
+    "name": "briancase1776"
+  },
   "plugins": [
     {
       "name": "icc",
-      "description": "ICC skills from briancase1776/ICC (main)",
-      "source": { "source": "github", "repo": "briancase1776/ICC", "ref": "main" },
+      "description": "ICC skills from briancase1776/ICC (main); exports ICC for Moot",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/briancase1776/ICC.git",
+        "ref": "main"
+      },
       "strict": false,
-      "skills": ["./.claude/skills/"]
-    },
-    {
-      "name": "moot",
-      "description": "Moot skills from briancase1776/Moot (main); depends on icc",
-      "source": { "source": "github", "repo": "briancase1776/Moot", "ref": "main" },
-      "strict": false,
-      "skills": ["./.claude/skills/"],
-      "dependencies": ["icc"],
+      "skills": [
+        "./.claude/skills/"
+      ],
       "hooks": {
         "SessionStart": [
           {
             "hooks": [
               {
                 "type": "command",
-                "command": "[ -n \"$ICC\" ] || [ -z \"$CLAUDE_ENV_FILE\" ] || { d=$(ls -td \"$CLAUDE_PLUGIN_ROOT\"/../../icc/*/ 2>/dev/null | head -n 1); [ -z \"$d\" ] || echo \"export ICC='$(cd \"$d\" && pwd)'\" >> \"$CLAUDE_ENV_FILE\"; }"
+                "command": "[ -n \"$ICC\" ] || [ -z \"$CLAUDE_ENV_FILE\" ] || printf \"export ICC='%s'\\n\" \"$(printf %s \"$CLAUDE_PLUGIN_ROOT\" | sed \"s/'/'\\\\\\\\''/g\")\" >> \"$CLAUDE_ENV_FILE\""
               }
             ]
           }
         ]
       }
+    },
+    {
+      "name": "moot",
+      "description": "Moot skills from briancase1776/Moot (main); depends on icc",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/briancase1776/Moot.git",
+        "ref": "main"
+      },
+      "strict": false,
+      "skills": [
+        "./.claude/skills/"
+      ],
+      "dependencies": [
+        "icc"
+      ]
     }
   ]
 }
